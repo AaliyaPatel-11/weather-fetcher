@@ -1,3 +1,4 @@
+
 # Command-Line Weather Fetcher
 
 [![Python Version](https://img.shields.io/badge/Python-3.8%2B-3776AB.svg?style=flat&logo=python&logoColor=white)](https://www.python.org/)
@@ -17,7 +18,7 @@ The following 1–2 minute walkthrough demonstrates:
 - Fetching and displaying current weather details
 - Handling an invalid location 
 
-![](assets/demo_video.mp4)
+https://github.com/user-attachments/assets/9f805619-60c0-41fa-8cc0-3236ecc48cc3
 
 ---
 
