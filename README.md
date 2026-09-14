@@ -1,78 +1,73 @@
-# 🌤️ Command-Line Weather Fetcher
+# Command-Line Weather Fetcher
 
-[![Python](https://img.shields.io/badge/Python-3.8%2B-blue.svg)](https://www.python.org/)
-[![Tests](https://img.shields.io/badge/Tests-Passing%20(14%2F14)-brightgreen.svg)](https://github.com/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Code Style: Clean](https://img.shields.io/badge/Code%20Style-Black-000000.svg)](https://github.com/psf/black)
+[![Python Version](https://img.shields.io/badge/Python-3.8%2B-3776AB.svg?style=flat&logo=python&logoColor=white)](https://www.python.org/)
+[![Test Suite](https://img.shields.io/badge/Tests-14%20Passing-success.svg?style=flat)](test_weather.py)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg?style=flat)](LICENSE)
+[![Code Style](https://img.shields.io/badge/Code%20Style-PEP8-black.svg?style=flat)](https://www.python.org/dev/peps/pep-0008/)
 
-A fast, lightweight, and visually stunning Command-Line Interface (CLI) application built in Python that queries real-time meteorological conditions for any city worldwide using a zero-configuration public weather API.
+A robust, lightweight Command-Line Interface (CLI) application developed in Python that retrieves and displays real-time meteorological conditions for user-specified locations worldwide. 
 
----
-
-## 🎬 Project Demo Video (1–2 Minutes)
-
-Watch the quick walkthrough demonstrating real-time city queries, unit conversions, interactive mode, and resilient error handling:
-
-<!--
-  HOW TO EMBED YOUR DEMO VIDEO ON GITHUB:
-  1. Record your 1-2 minute demo video (e.g., demo.mp4).
-  2. Drag and drop your demo.mp4 into your GitHub repository or release assets.
-  3. Replace the path below with your uploaded video path or GitHub user-content asset URL.
--->
-
-<div align="center">
-  <video src="assets/demo_video.mp4" controls="controls" width="100%" style="max-width: 800px; border-radius: 8px;">
-    Your browser does not support the video tag.
-  </video>
-</div>
-
-> 📹 **Video Walkthrough Checklist Demonstrated:**
-> 1. ✅ **Direct City Query**: Looking up cities (`Tokyo`, `Paris`) with real-time temperature, humidity, wind, and conditions.
-> 2. ✅ **Unit Customization**: Switching between Metric (`°C`), Imperial (`°F`), and Dual Mode (`--unit both`).
-> 3. ✅ **Interactive Prompt Mode**: Launching `python weather.py` without arguments for continuous lookups.
-> 4. ✅ **Graceful Error Handling**: Handling misspelled/invalid locations and network disconnections cleanly.
+The application utilizes high-availability public weather APIs requiring zero API keys, features an interactive REPL mode, supports dynamic unit conversions, and provides structured terminal output with comprehensive exception handling.
 
 ---
 
-## ✨ Features
+## Demonstration
 
-- **🌐 Zero-Key API Integration**: Queries `wttr.in` JSON API (`format=j1`) for immediate, frictionless execution without requiring API key registrations.
-- **⚡ Dual Operation Modes**:
-  - **CLI Arguments**: One-line command execution for scripting and fast lookups (`python weather.py London`).
-  - **Interactive REPL**: Interactive prompt loop (`python weather.py`) with continuous search and clean exit commands (`exit`, `quit`, `q`).
-- **🎨 Beautiful Terminal UI**: Powered by `rich` with formatted cards, emoji weather condition indicators (☀️, 🌧️, ❄️, ⛅, ⛈️), dynamic temperature color coding, and metric grids.
-- **📐 Flexible Units**: Easily toggle between **Metric** (°C, km/h), **Imperial** (°F, mph), or **Both** simultaneously.
-- **🛡️ Robust Error Handling**: Catches invalid cities, empty queries, DNS/network failures, timeouts, and malformed API responses with friendly suggestion banners.
-- **🧪 100% Tested**: Comprehensive `pytest` test suite covering parsing logic, unit conversions, and network error mocks.
+Below is an animated walkthrough demonstrating single-city lookups, unit conversions, interactive session handling, and graceful error handling for invalid queries:
 
----
+<p align="center">
+  <img src="assets/demo_preview.gif" alt="Command-Line Weather Fetcher Walkthrough" width="85%" style="border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);" />
+</p>
 
-## 📋 Weather Metrics Displayed
-
-| Metric | Description | Example |
-| :--- | :--- | :--- |
-| **📍 Location** | City, Region, and Country | `Tokyo, Japan` |
-| **🌤️ Condition** | General weather description with dynamic emoji | `🌦️ Patchy rain nearby` |
-| **🌡️ Temperature** | Current temperature with color heat-map | `27.0°C / 80.6°F` |
-| **🤔 Feels Like** | Perceived temperature index | `30.0°C / 86.0°F` |
-| **💧 Humidity** | Atmospheric relative humidity percentage | `86%` |
-| **💨 Wind Speed** | Speed and 16-point cardinal direction | `11.0 km/h (S)` |
-| **☀️ UV Index** | Ultraviolet radiation index | `4` |
-| **⏲️ Pressure** | Atmospheric barometric pressure | `1018 hPa` |
-| **☁️ Cloud Cover** | Percentage of cloud coverage | `85%` |
-| **👁️ Visibility** | Distance visibility | `10.0 km` |
+<p align="center">
+  <b><a href="assets/demo_video.mp4">&#9654; Watch Full-Length Video Walkthrough (MP4)</a></b>
+</p>
 
 ---
 
-## 🚀 Quick Start & Installation
+## Features
 
-### 1. Clone the Repository
+- **Multi-Provider Weather Integration**: Primary queries are routed through Open-Meteo for high throughput and sub-second response times, with automatic failover to wttr.in. Neither provider requires API keys or authentication credentials.
+- **Dual Execution Interfaces**:
+  - **Direct CLI Arguments**: Execute single queries for scripting and automated pipelines.
+  - **Interactive REPL Mode**: Continuous search environment with prompt handling and clean termination commands (`exit`, `quit`, `q`).
+- **Structured Terminal Presentation**: Formatted visual panels powered by `rich`, color-coded temperature badges, meteorological metrics, and clean typography.
+- **Flexible Measurement Units**: Seamlessly switch between **Metric** (°C, km/h), **Imperial** (°F, mph), or **Dual Mode** (simultaneous °C/°F and km/h/mph).
+- **Fault-Tolerant Error Handling**: Friendly, actionable diagnostics for invalid locations, network disconnects, request timeouts, and upstream API errors.
+- **Automated Test Coverage**: 100% test pass rate across 14 unit test suites utilizing `pytest` and mocked HTTP requests.
+
+---
+
+## Meteorological Metrics Displayed
+
+| Parameter | Description | Standard Metric | Imperial |
+| :--- | :--- | :--- | :--- |
+| **Location** | Resolved city, administrative region, and country | Text | Text |
+| **Condition** | Atmospheric condition summary with descriptive icon | Text | Text |
+| **Temperature** | Real-time ambient temperature | °C | °F |
+| **Feels Like** | Perceived temperature index | °C | °F |
+| **Relative Humidity** | Atmospheric moisture saturation | % | % |
+| **Wind Speed & Direction** | Velocity with 16-point cardinal compass direction | km/h | mph |
+| **UV Index** | Maximum ultraviolet radiation index | Numeric (0–11+) | Numeric (0–11+) |
+| **Atmospheric Pressure** | Surface barometric pressure | hPa | hPa |
+| **Cloud Cover** | Percentage of sky covered by clouds | % | % |
+| **Visibility** | Horizontal visual range | km | km |
+
+---
+
+## Installation & Setup
+
+### Prerequisites
+- Python 3.8 or higher
+- Git
+
+### 1. Clone Repository
 ```bash
-git clone https://github.com/your-username/weather-fetcher.git
+git clone https://github.com/AaliyaPatel-11/weather-fetcher.git
 cd weather-fetcher
 ```
 
-### 2. (Optional) Create a Virtual Environment
+### 2. (Optional) Set Up Virtual Environment
 ```bash
 # Windows
 python -m venv venv
@@ -90,56 +85,57 @@ pip install -r requirements.txt
 
 ---
 
-## 💻 Usage & CLI Examples
+## CLI Reference & Usage Examples
 
-### 1. Simple City Lookup (Metric by default)
+### 1. Standard City Lookup (Metric)
 ```bash
-python weather.py Tokyo
+python weather.py London
 ```
-*Output:*
-```
-╭──────────────── 📍 Shikinejima, Tokyo, Japan ────────────────╮
-│                                                              │
-│                    🌦️  Patchy rain nearby                     │
-│                                                              │
-│  🌡️  Temperature:  27.0°C      💧  Humidity:      86%         │
-│  🤔  Feels Like:   30.0°C     💨  Wind Speed:    11.0 km/h   │
-│                               (S)                            │
-│  ☀️  UV Index:     0           ⏲️  Pressure:      1018 hPa     │
-│  ☁️  Cloud Cover:  85%         👁️  Visibility:    10.0 km      │
-│                                                              │
-╰───────────────────── Observed: Just now ─────────────────────╯
+
+```text
+╭───────────── 📍 London, England, United Kingdom ──────────────╮
+│                                                               │
+│                          ☁️  Overcast                          │
+│                                                               │
+│  🌡️  Temperature:  20.7°C       💧  Humidity:      79%         │
+│  🤔  Feels Like:   21.7°C      💨  Wind Speed:    10.4 km/h   │
+│                                (SW)                           │
+│  ☀️  UV Index:     3            ⏲️  Pressure:      1020 hPa     │
+│  ☁️  Cloud Cover:  99%          👁️  Visibility:    11.1 km      │
+│                                                               │
+╰───────────────── Observed: 2026-09-14 11:00 ──────────────────╯
 ```
 
 ---
 
-### 2. Imperial Units (°F and mph)
+### 2. Imperial Measurement Units
 ```bash
 python weather.py "New York" --unit imperial
 ```
 
 ---
 
-### 3. Dual Units (Displaying °C and °F)
+### 3. Dual Unit Display
 ```bash
 python weather.py Paris --unit both
 ```
 
 ---
 
-### 4. Interactive Mode
-Run without arguments (or with `-i`) to start the interactive prompt:
+### 4. Interactive REPL Mode
+Running the script without parameters or with the `-i` flag initiates interactive session mode:
 ```bash
 python weather.py
 ```
-```
+
+```text
 ╭──────────────────────────────────────────────────────────────╮
 │ 🌤️  Command-Line Weather Fetcher (Interactive Mode)           │
 │ Type a city name to get live weather, or 'exit'/'q' to quit. │
 ╰──────────────────────────────────────────────────────────────╯
 
-🌍 Enter city name: London
-[...displays weather card...]
+🌍 Enter city name: Tokyo
+[Displays formatted weather card]
 
 🌍 Enter city name: exit
 👋 Goodbye! Have a great day.
@@ -147,14 +143,15 @@ python weather.py
 
 ---
 
-### 5. CLI Help & Options
+### 5. Full Command Options
 ```bash
 python weather.py --help
 ```
+
 ```text
 usage: weather [-h] [-c CITY_OPT] [-u {metric,imperial,both}] [-t TIMEOUT] [-i] [-v] [CITY]
 
-🌤️  Command-Line Weather Fetcher: Retrieve current meteorological conditions for any city worldwide.
+Command-Line Weather Fetcher: Retrieve current meteorological conditions for any city worldwide.
 
 positional arguments:
   CITY                  Name of the city to look up (e.g. London, Paris, Tokyo)
@@ -172,18 +169,22 @@ options:
 
 ---
 
-## 🛡️ Error Handling & Edge Cases
+## Error Handling & Resilience
 
-The application includes dedicated error recovery for common CLI issues:
+The application implements defensive input validation and exception catching to ensure smooth terminal execution:
 
-### Unknown / Invalid City
-```bash
-python weather.py "NonExistentCityXYZ123"
-```
-```
+| Scenario | Handled Condition | User Feedback |
+| :--- | :--- | :--- |
+| **Invalid Location** | Unresolvable query string or typo | Displays "City Not Found" with spelling guidance. |
+| **Network Loss** | DNS resolution failure / offline state | Displays "Network Error" with connection troubleshooting tips. |
+| **Service Timeout** | Upstream latency exceeding threshold | Displays "Request Timed Out" with retry suggestions. |
+| **Malformed Response** | Invalid JSON / HTTP 5xx codes | Graceful failover to secondary provider or error alert. |
+
+**Example Error Output:**
+```text
 ╭───────────────────────────── ❌ City Not Found ──────────────────────────────╮
 │                                                                              │
-│  City 'NonExistentCityXYZ123' was not found.                                 │
+│  City 'NonExistentCityXYZ' was not found.                                    │
 │                                                                              │
 │  💡 Tip: Double-check the spelling or try adding a country name (e.g.        │
 │  'Paris, France' or 'Cambridge, UK').                                        │
@@ -191,38 +192,25 @@ python weather.py "NonExistentCityXYZ123"
 ╰──────────────────────────────────────────────────────────────────────────────╯
 ```
 
-### Network Failure / Offline
-If the user is disconnected from the internet:
-```
-╭────────────────────────────── ❌ Network Error ──────────────────────────────╮
-│                                                                              │
-│  Unable to connect to weather server. Check your internet connection.        │
-│                                                                              │
-│  💡 Tip: Check your internet connection, proxy settings, or DNS              │
-│  configuration.                                                              │
-│                                                                              │
-╰──────────────────────────────────────────────────────────────────────────────╯
-```
-
 ---
 
-## 🧪 Running Automated Unit Tests
+## Automated Testing
 
-The test suite runs with `pytest` and mocks network requests to verify parsing, error handling, and unit conversions without relying on live network connectivity:
+The project includes an automated unit test suite executed via `pytest`. All external network interactions are mocked to enable deterministic, offline validation:
 
 ```bash
 pytest test_weather.py -v
 ```
 
-### Test Suite Summary:
+### Test Suite Execution Output:
 ```text
-test_weather.py::TestWeatherService::test_fetch_weather_success PASSED
+test_weather.py::TestWeatherService::test_fetch_weather_open_meteo_success PASSED
 test_weather.py::TestWeatherService::test_empty_city_raises_city_not_found PASSED
-test_weather.py::TestWeatherService::test_http_404_raises_city_not_found PASSED
-test_weather.py::TestWeatherService::test_non_json_unknown_location_raises_city_not_found PASSED
+test_weather.py::TestWeatherService::test_city_not_found_geocoding_empty PASSED
+test_weather.py::TestWeatherService::test_fallback_to_wttr_on_open_meteo_server_error PASSED
 test_weather.py::TestWeatherService::test_connection_error_raises_network_error PASSED
 test_weather.py::TestWeatherService::test_timeout_raises_request_timeout_error PASSED
-test_weather.py::TestWeatherService::test_http_500_raises_api_response_error PASSED
+test_weather.py::TestHelpersAndFormatting::test_degrees_to_compass PASSED
 test_weather.py::TestHelpersAndFormatting::test_get_weather_icon PASSED
 test_weather.py::TestHelpersAndFormatting::test_get_temp_color PASSED
 test_weather.py::TestHelpersAndFormatting::test_display_weather_runs_cleanly PASSED
@@ -231,44 +219,29 @@ test_weather.py::TestCliAndArgumentParsing::test_cli_parser_positional_arg PASSE
 test_weather.py::TestCliAndArgumentParsing::test_cli_parser_optional_city PASSED
 test_weather.py::TestCliAndArgumentParsing::test_handle_fetch_success_and_failure PASSED
 
-============================== 14 passed in 0.65s ==============================
+============================== 14 passed in 1.20s ==============================
 ```
 
 ---
 
-## 📂 Project Structure
+## Project Structure
 
 ```text
-Weather Fetcher/
-├── weather.py            # CLI entry point, argument parsing, & interactive REPL
-├── weather_service.py    # API client, dataclass model, & network exceptions
-├── formatter.py          # Rich terminal formatting, card layout, & emoji mapping
-├── test_weather.py       # Automated unit test suite with mocks
-├── requirements.txt      # Python package dependencies
+weather-fetcher/
+├── weather.py            # CLI entry point, argument parser, and interactive REPL
+├── weather_service.py    # Multi-provider weather client and data normalization
+├── formatter.py          # Terminal rendering, layout panels, and color styling
+├── test_weather.py       # Automated unit test suite with mocked network calls
+├── requirements.txt      # Production and testing dependencies
 ├── .gitignore            # Git exclusion rules
-└── README.md             # Project documentation and video walkthrough
+├── LICENSE               # MIT License
+└── assets/
+    ├── demo_preview.gif  # Animated demonstration preview for README
+    └── demo_video.mp4    # Full-length video walkthrough (MP4)
 ```
 
 ---
 
-## 🎥 Video Recording Guide (1–2 min Walkthrough)
+## License
 
-To record your demonstration video for submission:
-1. **Introduction (15s)**: Briefly introduce the project objective and state that it uses Python with a zero-key public API.
-2. **City Lookups (30s)**:
-   - Run `python weather.py Tokyo` (point out the temperature, humidity, wind, and condition card).
-   - Run `python weather.py "New York" --unit imperial` (point out °F and mph).
-3. **Interactive Mode (30s)**:
-   - Run `python weather.py` to enter interactive mode.
-   - Type `Paris` and view the result.
-   - Type `exit` to exit cleanly.
-4. **Error Handling (20s)**:
-   - Run `python weather.py "NonExistentCityXYZ"` to demonstrate the graceful error banner and helpful user tip.
-5. **Embedding the Video**:
-   - Save the recording in the `assets/` directory (e.g. `assets/demo_video.mp4`) and push to your GitHub repo!
-
----
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
