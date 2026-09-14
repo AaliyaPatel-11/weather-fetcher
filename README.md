@@ -231,10 +231,7 @@ weather-fetcher/
 ├── test_weather.py       # Automated unit test suite with mocked network calls
 ├── requirements.txt      # Production and testing dependencies
 ├── .gitignore            # Git exclusion rules
-├── LICENSE               # MIT License
-└── assets/
-    ├── demo_preview.gif  # Animated demonstration preview for README
-    └── demo_video.mp4    # Full-length video walkthrough (MP4)
+└── LICENSE               # MIT License
 ```
 
 ---
