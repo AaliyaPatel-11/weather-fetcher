@@ -10,18 +10,14 @@ A robust, lightweight Command-Line Interface (CLI) application developed in Pyth
 The application utilizes high-availability public weather APIs requiring zero API keys, features an interactive REPL mode, supports dynamic unit conversions, and provides structured terminal output with comprehensive exception handling.
 
 ---
-
 ## Demonstration
 
-Below is an animated walkthrough demonstrating single-city lookups, unit conversions, interactive session handling, and graceful error handling for invalid queries:
+The following 1–2 minute walkthrough demonstrates:
+- Entering a city name
+- Fetching and displaying current weather details
+- Handling an invalid location 
 
-<p align="center">
-  <img src="assets/demo_preview.gif" alt="Command-Line Weather Fetcher Walkthrough" width="85%" style="border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);" />
-</p>
-
-<p align="center">
-  <b><a href="assets/demo_video.mp4">&#9654; Watch Full-Length Video Walkthrough (MP4)</a></b>
-</p>
+![](assets/demo_video.mp4)
 
 ---
 
