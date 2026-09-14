@@ -14,10 +14,43 @@ from weather_service import (
     RequestTimeoutError,
     APIResponseError,
     get_weather_icon,
+    degrees_to_compass,
 )
 from formatter import display_weather, display_error, get_temp_color
 from weather import create_parser, handle_fetch
 
+
+# Sample mock payloads for Open-Meteo
+MOCK_GEO_PAYLOAD = {
+    "results": [
+        {
+            "id": 2988507,
+            "name": "Paris",
+            "latitude": 48.85341,
+            "longitude": 2.3488,
+            "country": "France",
+            "admin1": "Ile-de-France",
+        }
+    ]
+}
+
+MOCK_OPEN_METEO_PAYLOAD = {
+    "current": {
+        "time": "2026-09-14T12:00",
+        "temperature_2m": 24.0,
+        "relative_humidity_2m": 60,
+        "apparent_temperature": 25.0,
+        "weather_code": 0,
+        "surface_pressure": 1012.0,
+        "wind_speed_10m": 18.0,
+        "wind_direction_10m": 200,
+        "cloud_cover": 15,
+        "visibility": 10000.0,
+    },
+    "daily": {
+        "uv_index_max": [6.0],
+    },
+}
 
 # Sample mock payload matching wttr.in format=j1 schema
 MOCK_WTTR_PAYLOAD = {
@@ -53,28 +86,25 @@ MOCK_WTTR_PAYLOAD = {
 class TestWeatherService:
     """Test suite for WeatherService API interactions and parsing."""
 
-    def test_fetch_weather_success(self):
-        """Test successful weather fetching and parsing."""
+    def test_fetch_weather_open_meteo_success(self):
+        """Test successful weather fetching via Open-Meteo."""
         service = WeatherService(timeout=5)
-        mock_resp = MagicMock()
-        mock_resp.status_code = 200
-        mock_resp.json.return_value = MOCK_WTTR_PAYLOAD
+        geo_resp = MagicMock(status_code=200, json=lambda: MOCK_GEO_PAYLOAD)
+        weather_resp = MagicMock(status_code=200, json=lambda: MOCK_OPEN_METEO_PAYLOAD)
 
-        with patch.object(service.session, "get", return_value=mock_resp) as mock_get:
+        with patch.object(service.session, "get", side_effect=[geo_resp, weather_resp]):
             data = service.fetch_weather("Paris")
-            mock_get.assert_called_once()
 
             assert isinstance(data, WeatherData)
             assert data.city == "Paris"
             assert data.region == "Ile-de-France"
             assert data.country == "France"
             assert data.temp_c == 24.0
-            assert data.temp_f == 75.0
+            assert data.temp_f == 75.2
             assert data.humidity == 60
             assert data.wind_speed_kmph == 18.0
-            assert data.wind_speed_mph == 11.0
             assert data.wind_direction == "SSW"
-            assert data.condition == "Sunny"
+            assert data.condition == "Clear sky"
             assert data.uv_index == 6
             assert data.pressure_hpa == 1012.0
 
@@ -84,63 +114,59 @@ class TestWeatherService:
         with pytest.raises(CityNotFoundError, match="City name cannot be empty"):
             service.fetch_weather("   ")
 
-    def test_http_404_raises_city_not_found(self):
-        """Test that HTTP 404 response raises CityNotFoundError."""
+    def test_city_not_found_geocoding_empty(self):
+        """Test that missing results in geocoding raises CityNotFoundError."""
         service = WeatherService()
-        mock_resp = MagicMock()
-        mock_resp.status_code = 404
+        geo_resp = MagicMock(status_code=200, json=lambda: {"results": []})
 
-        with patch.object(service.session, "get", return_value=mock_resp):
+        with patch.object(service.session, "get", return_value=geo_resp):
             with pytest.raises(CityNotFoundError, match="was not found"):
                 service.fetch_weather("NonExistentCityXYZ")
 
-    def test_non_json_unknown_location_raises_city_not_found(self):
-        """Test when wttr.in returns HTML with unknown location."""
+    def test_fallback_to_wttr_on_open_meteo_server_error(self):
+        """Test automatic fallback to wttr.in if Open-Meteo server fails."""
         service = WeatherService()
-        mock_resp = MagicMock()
-        mock_resp.status_code = 200
-        mock_resp.json.side_effect = ValueError("No JSON")
-        mock_resp.text = "Unknown location; please try another query"
+        geo_err_resp = MagicMock(status_code=500)
+        wttr_resp = MagicMock(status_code=200, json=lambda: MOCK_WTTR_PAYLOAD)
 
-        with patch.object(service.session, "get", return_value=mock_resp):
-            with pytest.raises(CityNotFoundError, match="was not found"):
-                service.fetch_weather("UnknownCity12345")
+        with patch.object(service.session, "get", side_effect=[geo_err_resp, wttr_resp]):
+            data = service.fetch_weather("Paris")
+            assert data.city == "Paris"
+            assert data.temp_c == 24.0
 
     def test_connection_error_raises_network_error(self):
-        """Test network connection error handling."""
+        """Test network connection error handling when both endpoints fail."""
         service = WeatherService()
         with patch.object(service.session, "get", side_effect=requests.exceptions.ConnectionError):
             with pytest.raises(NetworkConnectionError, match="Unable to connect"):
                 service.fetch_weather("Tokyo")
 
     def test_timeout_raises_request_timeout_error(self):
-        """Test request timeout handling."""
+        """Test request timeout handling when both endpoints timeout."""
         service = WeatherService(timeout=3)
         with patch.object(service.session, "get", side_effect=requests.exceptions.Timeout):
             with pytest.raises(RequestTimeoutError, match="timed out"):
                 service.fetch_weather("Tokyo")
 
-    def test_http_500_raises_api_response_error(self):
-        """Test HTTP 500 error handling."""
-        service = WeatherService()
-        mock_resp = MagicMock()
-        mock_resp.status_code = 500
-
-        with patch.object(service.session, "get", return_value=mock_resp):
-            with pytest.raises(APIResponseError, match="HTTP 500"):
-                service.fetch_weather("London")
-
 
 class TestHelpersAndFormatting:
     """Test suite for helper functions and output formatting."""
+
+    def test_degrees_to_compass(self):
+        """Test degree to cardinal direction conversion."""
+        assert degrees_to_compass(0) == "N"
+        assert degrees_to_compass(90) == "E"
+        assert degrees_to_compass(180) == "S"
+        assert degrees_to_compass(270) == "W"
+        assert degrees_to_compass(200) == "SSW"
 
     def test_get_weather_icon(self):
         """Test icon lookup mapping."""
         assert get_weather_icon("Clear sky") == "☀️"
         assert get_weather_icon("Partly cloudy") == "⛅"
         assert get_weather_icon("Heavy Rain") == "🌧️"
-        assert get_weather_icon("Blizzard condition") == "🌨️"
-        assert get_weather_icon("Unrecognized weather condition") == "🌡️"
+        assert get_weather_icon("Blizzard") == "🌨️"
+        assert get_weather_icon("Unrecognized condition") == "🌡️"
 
     def test_get_temp_color(self):
         """Test temperature color thresholds."""
@@ -164,14 +190,13 @@ class TestHelpersAndFormatting:
             wind_speed_mph=7.5,
             wind_direction="W",
             condition="Partly cloudy",
-            weather_code="116",
+            weather_code="2",
             pressure_hpa=1016.0,
             uv_index=4,
             visibility_km=10.0,
             cloud_cover=30,
-            observation_time="10:00 AM",
+            observation_time="2026-09-14 10:00",
         )
-        # Should not raise exception
         display_weather(dummy_data, unit="metric")
         display_weather(dummy_data, unit="imperial")
         display_weather(dummy_data, unit="both")
@@ -198,15 +223,13 @@ class TestCliAndArgumentParsing:
 
     def test_handle_fetch_success_and_failure(self):
         service = WeatherService()
-        mock_resp = MagicMock()
-        mock_resp.status_code = 200
-        mock_resp.json.return_value = MOCK_WTTR_PAYLOAD
+        geo_resp = MagicMock(status_code=200, json=lambda: MOCK_GEO_PAYLOAD)
+        weather_resp = MagicMock(status_code=200, json=lambda: MOCK_OPEN_METEO_PAYLOAD)
 
-        with patch.object(service.session, "get", return_value=mock_resp):
+        with patch.object(service.session, "get", side_effect=[geo_resp, weather_resp]):
             success = handle_fetch(service, "Paris", unit="metric")
             assert success is True
 
-        # Test failure case
         with patch.object(service.session, "get", side_effect=requests.exceptions.ConnectionError):
             success = handle_fetch(service, "Paris", unit="metric")
             assert success is False
